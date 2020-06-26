@@ -3,6 +3,8 @@ import Car from './Car/Car.js';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
 import Counter from './Counter/Counter'
 
+export const ClickedContext = React.createContext(false);
+
 class App extends Component {
 
   constructor(props){
@@ -10,6 +12,7 @@ class App extends Component {
     console.log('App constructor');
 
     this.state = {
+      clicked: false,
       cars: [
         {name: 'Ford', year: 2018},
         {name: 'Audi', year: 2016},
@@ -83,11 +86,12 @@ class App extends Component {
     let cars = null;
     if(this.state.showCars){
       cars = this.state.cars.map( (car, index) => {
-        return (          
+        return (
           <ErrorBoundary key = {index}>
-            <Car 
+            <Car
               name = {car.name}
               year = {car.year}
+              index = {index}
               onChangeTitle = { this.changeTitleHandler.bind(this, car.name)}
               onChangeCarName = { event => this.onChangeCarName(event.target.value, index) }
               onDelete = { this.onDeleteCar.bind(this, index) }
@@ -97,18 +101,20 @@ class App extends Component {
       } );
     }
 
-    
     return (
       <div className="App" style={divStyle}>
         <h1>{this.state.pageTitle}</h1>
         <h1>{this.props.title}</h1>
 
-        <Counter />
+        <ClickedContext.Provider value={this.state.clicked}>
+          <Counter />
+        </ClickedContext.Provider>
         <hr/>
         {/* <input type='text' onChange={this.reflectInputHandler} /> */}
 
         <button style={{marginTop: '20px'}} onClick={this.changeTitleHandler.bind(this, '(Changed)')}>Change title!</button>
         <button style={{marginTop: '20px'}} onClick={this.toggleCarsHandler}>Toggle cars</button>
+        <button style={{marginTop: '20px'}} onClick={()=>this.setState({clicked: !this.state.clicked})}>Change clicked</button>
 
         <div style={{
           width: 400,
@@ -119,7 +125,7 @@ class App extends Component {
         //Second way to implement if logic
         cars
         //First way to implement if logic
-          // this.state.showCars 
+          // this.state.showCars
           // ?   this.state.cars.map( (car, index) => {
           //     return (
           //       <Car 

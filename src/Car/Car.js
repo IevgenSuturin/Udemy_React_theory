@@ -1,22 +1,34 @@
 import React from 'react'
 //Use Redux library in order to provide inline style with pseudo class functionality
 //import Radium from 'radium'
+import PropTypes from 'prop-types'
 import classes from './Car.module.scss'
 import withClass from '../hoc/withClass'
 
 class Car extends React.Component{
 
+    constructor(props){
+        super(props);
+// New way to create reference
+        this.inputRef = React.createRef();
+    }
+
+// Input reference functionality
+    componentDidMount(){
+        if(this.props.index === 0){
+            this.inputRef.current.focus();
+        }
+    }
+
     render(){
         console.log('Car render');
-        console.log(classes.Car.input);
 
-
-        const inputClasses = [classes.Car.input];
+        const inputClasses = [classes.input];
         
         if(this.props.name !== ''){
-            inputClasses.push(classes.Car.green);
+            inputClasses.push(classes.green);
         } else {
-            inputClasses.push(classes.Car.red);
+            inputClasses.push(classes.red);
         }
         
         if(this.props.name.length > 4){
@@ -29,6 +41,9 @@ class Car extends React.Component{
                 <p>Year: <strong>{this.props.year}</strong></p>
                 { this.props.children }
                 <input 
+// Old way to create reference
+                    // ref={(inputRef)=>   this.inputRef = inputRef}
+                    ref={this.inputRef}
                     type='text' 
                     onChange={this.props.onChangeCarName} 
                     value={this.props.name}
@@ -39,6 +54,14 @@ class Car extends React.Component{
             </React.Fragment>
         )
     }
+}
+
+Car.propTypes = {
+    name: PropTypes.string.isRequired,
+    year: PropTypes.number,
+    index: PropTypes.number,
+    onChangeName: PropTypes.func,
+    onDelete: PropTypes.func
 }
 
 console.log(classes)
